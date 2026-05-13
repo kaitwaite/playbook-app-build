@@ -295,6 +295,7 @@
     <li><a href="#phases">Phases</a></li>
     <li><a href="#governance">Governance</a></li>
     <li><a href="#byok">BYOK</a></li>
+    <li><a href="#product-track">Product Track</a></li>
     <li><a href="#lessons">Lessons Learned</a></li>
     <li><a href="#favicon">Favicon</a></li>
   </ul>
@@ -734,6 +735,94 @@ GITHUB_URL       — link to the public repo</pre>
 </div>
 </section>
 
+
+<!-- PRODUCT TRACK -->
+<section id="product-track">
+  <div class="inner-wrap">
+    <div class="reveal">
+      <span class="section-label">04B &mdash; Product Track Pattern</span>
+      <h2>When it might be a product</h2>
+      <p>Parallel to BYOK. Where BYOK exists to make public demos free for Kate, Product Track exists to keep monetization options alive.</p>
+
+      <div class="quote-block">
+        <p>The most expensive moment to realize a project is monetizable is after you&rsquo;ve pushed it as a public AI-tagged repo with a BYOK gate.</p>
+      </div>
+
+      <hr>
+      <h3>The 5 Differences from Showcase</h3>
+      <div class="table-wrap" style="margin-top:1rem;">
+        <table>
+          <thead><tr><th>Setting</th><th>Showcase</th><th>Product</th></tr></thead>
+          <tbody>
+            <tr><td>Repo visibility</td><td>Public</td><td>Private &mdash; always</td></tr>
+            <tr><td>Topics</td><td>claude &middot; anthropic &middot; ai &middot; kate-haan + type tags</td><td>kate-haan + category only. Omit: claude, anthropic, ai</td></tr>
+            <tr><td>Gate type</td><td>BYOK (user provides key)</td><td>ACCESS_CODE constant (Kate absorbs cost)</td></tr>
+            <tr><td>Versioning</td><td>v0.1 = live but incomplete &middot; v1.0 = publicly shareable</td><td>v0.1 = private beta &middot; v1.0 = public launch</td></tr>
+            <tr><td>URL</td><td>Dual: [name].katehaan.dev + [name]-demo.katehaan.dev</td><td>Single: [name].katehaan.dev only</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr>
+      <h3>Access Code Gate Standard</h3>
+      <p>A single rotatable constant. No sessionStorage on the API key side &mdash; Kate&rsquo;s key is the server&rsquo;s key, the access code controls entry.</p>
+      <div class="code-block"><pre>// components/App.tsx
+const ACCESS_CODE = "your-code-here";</pre></div>
+      <p>Rotate by editing the constant, committing with <code style="font-family:'DM Mono',monospace;color:var(--fern);">update: rotate access code</code>, and texting the new code to active testers. Store the active code in 1Password &mdash; never in the repo.</p>
+
+      <div class="callout">
+        <span class="callout-label">BYOK vs Access Code</span>
+        <p><strong>BYOK</strong> = &ldquo;I built this to show off &mdash; you pay for the inference.&rdquo; <strong>Access code</strong> = &ldquo;I built this to test &mdash; I&rsquo;m paying for the inference because I want your usage data.&rdquo; The first is a portfolio strategy. The second is a product strategy. Don&rsquo;t confuse them.</p>
+      </div>
+
+      <hr>
+      <h3>Waitlist Landing Page</h3>
+      <p>Anyone without a code lands on a waitlist screen. Use Formspree (free tier covers private betas comfortably).</p>
+      <ul class="checklist" style="margin-top:0.75rem;">
+        <li>formspree.io &rarr; create account &rarr; New Form &rarr; name it &ldquo;[product] waitlist&rdquo;</li>
+        <li>Copy form ID and drop into landing page fetch URL</li>
+        <li>Capture: email + optional context field (&ldquo;what would you use this for?&rdquo;)</li>
+        <li>Export to CSV when ready to invite waves</li>
+      </ul>
+
+      <hr>
+      <h3>Going Public (v0.1 &rarr; v1.0)</h3>
+      <ul class="checklist" style="margin-top:0.75rem;">
+        <li>Remove ACCESS_CODE gate (or switch to paid/auth flow)</li>
+        <li>Repo stays private. Always. Product Track repos are never open-sourced.</li>
+        <li>Topics stay anonymized &mdash; no retroactive claude/ai tagging</li>
+        <li>Email waitlist with launch announcement</li>
+        <li>Tag v1.0 &mdash; Public launch</li>
+        <li>Update profile pinning decision (Product Track repos are never pinned)</li>
+      </ul>
+
+      <hr>
+      <h3>Product Track Checklists</h3>
+      <div class="two-col" style="margin-top:1.2rem;">
+        <div>
+          <h3 style="margin-bottom:0.75rem;">Phase 4 (GitHub Setup)</h3>
+          <ul class="checklist">
+            <li>Repo created private (not public)</li>
+            <li>Topics exclude claude &middot; anthropic &middot; ai</li>
+            <li>Description avoids AI-positioning language</li>
+            <li>README badge: status-private%20beta-C4882A</li>
+            <li>No pinning on profile during beta</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="margin-bottom:0.75rem;">Phase 5 (Vercel)</h3>
+          <ul class="checklist">
+            <li>Single subdomain only &mdash; no -demo variant</li>
+            <li>Waitlist endpoint (Formspree) tested with real submission</li>
+            <li>Access code tested end-to-end on production URL</li>
+            <li>Access code stored in 1Password, not in repo</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- LESSONS LEARNED -->
 <section id="lessons">
   <div class="inner-wrap">
@@ -791,6 +880,21 @@ GITHUB_URL       — link to the public repo</pre>
       <p>The original design system used green for everything — backgrounds, text, accents, borders. Nothing had contrast. Rule: green family = structural (backgrounds, borders) only. Mustard = every single accent. Never mix.</p>
     </div>
 
+
+    <div class="lesson">
+      <h3>Decide your track before you push</h3>
+      <p>The most expensive moment to realize a project is monetizable is after you&rsquo;ve pushed it as a public AI-tagged repo with a BYOK gate. The topics get scraped, the repo gets indexed, and your positioning is locked in. The track decision belongs in Phase 1, not Phase 5.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>Public-to-private is a one-way ratchet</h3>
+      <p>Once code has been public, assume it&rsquo;s been scraped, cloned, or indexed somewhere you can&rsquo;t reach. Product Track repos start private and stay private. The track decision at Phase 1 is the only chance to get this right.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>An access code is not a BYOK gate</h3>
+      <p>They look similar but exist for opposite reasons. BYOK = portfolio strategy (you show off, user pays for inference). Access code = product strategy (you pay for inference in exchange for usage data and feedback). Don&rsquo;t confuse them.</p>
+    </div>
     <div class="lesson">
       <h3>The gap is smaller than it looks</h3>
       <p>The whole process — zero to a live, custom-domain app with a design system and a BYOK gate — takes one focused session. It wasn't smooth. It also wasn't that hard. The gap between "I could never build that" and "I just did" is mostly just not quitting when the third thing in a row doesn't work.</p>
