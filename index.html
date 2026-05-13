@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>App Build Playbook — Kate Haan</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light only;
+    --pine:    #1a2421;
+    --fern:    #2E4A3E;
+    --sage:    #536B5E;
+    --bone:    #FAF8F5;
+    --linen:   #F0EDE8;
+    --canvas:  #E4DFD8;
+    --mustard: #C4882A;
+    --amber:   #D4A04A;
+    --rust:    #A84832;
+    --ink:     #221F1A;
+    --mid:     #4A4238;
+    --muted:   #8A8070;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bone);
+    color: var(--ink);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--pine);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem; font-style: italic; font-weight: 300;
+    letter-spacing: 0.1em; color: var(--bone);
+  }
+  .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--bone); }
+
+  /* COVER */
+  #cover {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: flex-end; background: var(--pine);
+    position: relative; overflow: hidden; padding-top: 56px;
+  }
+  #cover::before {
+    content: ''; position: absolute; top: -15%; right: -8%;
+    width: 50vw; height: 50vw; border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,136,42,0.15) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  #cover::after {
+    content: ''; position: absolute; bottom: -12%; left: -6%;
+    width: 38vw; height: 38vw; border-radius: 50%;
+    background: radial-gradient(circle, rgba(168,72,50,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .cover-inner {
+    max-width: 860px; margin: 0 auto;
+    padding: 0 2rem 5rem; position: relative; z-index: 1; width: 100%;
+  }
+  .cover-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--sage); margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .cover-tag::before {
+    content: ''; display: inline-block;
+    width: 32px; height: 1px; background: var(--sage);
+  }
+  .cover-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    font-weight: 300; line-height: 0.95; color: var(--bone);
+    margin-bottom: 1.5rem;
+  }
+  .cover-title span { display: block; font-style: italic; color: var(--amber); }
+  .cover-sub {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem; font-weight: 300; letter-spacing: 0.04em;
+    color: rgba(250,248,245,0.5); margin-bottom: 3rem;
+    max-width: 480px; line-height: 1.75;
+  }
+  .cover-pills { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid rgba(250,248,245,0.18);
+    color: rgba(250,248,245,0.45); border-radius: 2px;
+  }
+
+  /* SECTIONS */
+  section { padding: 6rem 2rem; max-width: 860px; margin: 0 auto; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--fern); margin-bottom: 0.6rem; display: block;
+  }
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 300; line-height: 1.1; color: var(--pine); margin-bottom: 1.2rem;
+  }
+  h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--pine); margin-bottom: 0.5rem;
+  }
+  p { font-size: 0.98rem; line-height: 1.8; color: var(--mid); margin-bottom: 1rem; max-width: 640px; }
+  .lead {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-style: italic;
+    line-height: 1.6; color: var(--pine);
+    margin-bottom: 1.6rem; max-width: 600px;
+  }
+  hr { border: none; border-top: 1px solid var(--canvas); margin: 3rem 0; }
+  a { color: var(--mustard); text-decoration: none; }
+  a:hover { color: var(--amber); }
+
+  /* CARDS */
+  .card {
+    background: var(--linen); border: 1px solid var(--canvas);
+    padding: 1.5rem; border-radius: 3px; margin-bottom: 1rem;
+  }
+  .card-mustard { border-left: 3px solid var(--mustard); }
+  .card-fern    { border-left: 3px solid var(--fern); }
+  .card-rust    { border-left: 3px solid var(--rust); }
+
+  /* QUOTE */
+  .quote-block {
+    border-left: 3px solid var(--mustard);
+    padding: 1.2rem 1.8rem; margin: 2rem 0;
+    background: rgba(196,136,42,0.05);
+    border-radius: 0 3px 3px 0;
+  }
+  .quote-block p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem; font-style: italic;
+    color: var(--pine); line-height: 1.55; margin: 0; max-width: 100%;
+  }
+
+  /* CALLOUT */
+  .callout {
+    background: var(--linen); border: 1px solid var(--canvas);
+    border-left: 4px solid var(--mustard);
+    padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 0 3px 3px 0;
+  }
+  .callout-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--mustard); margin-bottom: 0.4rem; display: block;
+  }
+  .callout p { font-size: 0.9rem; margin: 0; color: var(--mid); }
+
+  .callout-warn { border-left-color: var(--rust); }
+  .callout-warn .callout-label { color: var(--rust); }
+
+  /* CODE */
+  .code-block {
+    background: var(--linen); border: 1px solid var(--canvas);
+    padding: 1rem 1.5rem; border-radius: 3px; margin: 1rem 0;
+    overflow-x: auto;
+  }
+  .code-block pre {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem; line-height: 1.7; color: var(--fern);
+    white-space: pre; margin: 0;
+  }
+
+  /* TABLES */
+  .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--pine); }
+  thead th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--bone); padding: 0.75rem 1rem; text-align: left;
+    font-weight: 400;
+  }
+  tbody tr { border-bottom: 1px solid var(--canvas); }
+  tbody tr:nth-child(even) { background: var(--linen); }
+  tbody td {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.87rem; color: var(--mid);
+    padding: 0.75rem 1rem; line-height: 1.5;
+  }
+  tbody td:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem; color: var(--fern); font-weight: 400;
+  }
+
+  /* GRID */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .three-col { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+
+  /* PHASE CARDS */
+  .phase-card {
+    background: var(--pine); padding: 2rem; border-radius: 3px;
+    margin-bottom: 1rem; position: relative; overflow: hidden;
+  }
+  .phase-card::before {
+    content: ''; position: absolute; right: -2rem; top: -2rem;
+    width: 8rem; height: 8rem; border-radius: 50%;
+    background: rgba(196,136,42,0.1);
+  }
+  .phase-card .section-label { color: var(--sage); }
+  .phase-card h3 { color: var(--bone); font-size: 0.95rem; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+  .phase-card p { color: rgba(250,248,245,0.6); font-size: 0.87rem; margin: 0; max-width: 100%; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; margin: 1rem 0; }
+  .checklist li {
+    font-size: 0.9rem; color: var(--mid); line-height: 1.65;
+    margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;
+  }
+  .checklist li::before {
+    content: '→'; position: absolute; left: 0;
+    color: var(--fern); font-size: 0.75rem; top: 2px;
+  }
+  .checklist.warn li::before { content: '⚠'; color: var(--rust); }
+
+  /* LESSON LEARNED */
+  .lesson {
+    background: var(--linen); border: 1px solid var(--canvas);
+    border-left: 3px solid var(--rust);
+    padding: 1.25rem 1.5rem; margin-bottom: 1rem; border-radius: 0 3px 3px 0;
+  }
+  .lesson h3 { color: var(--rust); font-size: 0.68rem; margin-bottom: 0.35rem; }
+  .lesson p { font-size: 0.88rem; margin: 0; }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0; transform: translateY(22px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* FOOTER */
+  footer {
+    background: var(--pine); padding: 3rem 2rem; text-align: center;
+  }
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem; letter-spacing: 0.16em;
+    color: rgba(250,248,245,0.28); margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    .two-col, .three-col { grid-template-columns: 1fr; }
+    nav .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Kate — App Build Playbook</div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#design">Design System</a></li>
+    <li><a href="#phases">Phases</a></li>
+    <li><a href="#governance">Governance</a></li>
+    <li><a href="#byok">BYOK</a></li>
+    <li><a href="#lessons">Lessons Learned</a></li>
+  </ul>
+</nav>
+
+<!-- COVER -->
+<section id="cover">
+  <div class="cover-inner">
+    <div class="cover-tag">App Build Playbook · 2026</div>
+    <div class="cover-title">
+      Build<br>
+      <span>Ship. Repeat.</span>
+    </div>
+    <div class="cover-sub">
+      A step-by-step guide to building, branding, and deploying Claude-powered web tools — with the governance, lessons learned, and design standards to do it right.
+    </div>
+    <div class="cover-pills">
+      <span class="pill">Next.js + Vercel</span>
+      <span class="pill">Anthropic Claude</span>
+      <span class="pill">katehaan.dev</span>
+      <span class="pill">v1.0 · Living Document</span>
+    </div>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="reveal">
+    <span class="section-label">00 — Overview</span>
+    <h2>What this is</h2>
+    <div class="quote-block">
+      <p>The goal is to ship real tools that solve real problems — with enough governance that the second one is easier than the first, and the tenth is almost automatic.</p>
+    </div>
+    <p>This playbook captures every decision, standard, and lesson learned from building Kate's portfolio of Claude-powered tools. It is a living document — updated every time something new is learned.</p>
+    <hr>
+    <h3>Standard Tech Stack</h3>
+    <div class="two-col" style="margin-top:1.2rem;">
+      <div class="card card-mustard">
+        <h3>Frontend</h3>
+        <p style="font-size:0.87rem;margin:0;line-height:1.7;">Next.js 15+ · App Router · TypeScript · Inline styles with CSS variables · No Tailwind color classes</p>
+      </div>
+      <div class="card card-fern">
+        <h3>AI & Backend</h3>
+        <p style="font-size:0.87rem;margin:0;line-height:1.7;">Anthropic Claude API · claude-sonnet-4-20250514 · Vercel deployment · katehaan.dev subdomains</p>
+      </div>
+      <div class="card card-fern">
+        <h3>Fonts</h3>
+        <p style="font-size:0.87rem;margin:0;line-height:1.7;">next/font/google — Cormorant Garamond · Outfit · DM Mono. Never import via URL in CSS.</p>
+      </div>
+      <div class="card card-rust">
+        <h3>Dev Environment</h3>
+        <p style="font-size:0.87rem;margin:0;line-height:1.7;">Cursor + Claude Code · GitHub for version control · Mac (local dev) · Mac mini for agents</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN SYSTEM -->
+<section id="design">
+  <div class="reveal">
+    <span class="section-label">01 — Design System</span>
+    <h2>Colors, type & patterns</h2>
+    <p>A palette drawn from the land — deep forest greens, warm bone, the amber of late-afternoon light, and the rust of dried terracotta. Sophisticated but alive. Organic without being rustic.</p>
+    <hr>
+
+    <h3>Color Palette</h3>
+    <div class="table-wrap" style="margin-top:1.2rem;">
+      <table>
+        <thead><tr><th>Name</th><th>Hex</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td>Pine</td><td>#1a2421</td><td>Dark backgrounds, hero sections, nav</td></tr>
+          <tr><td>Fern</td><td>#2E4A3E</td><td>Section labels, borders on dark, card accents</td></tr>
+          <tr><td>Sage</td><td>#536B5E</td><td>Secondary text on dark backgrounds</td></tr>
+          <tr><td>Bone</td><td>#FAF8F5</td><td>Light section backgrounds, primary text on dark</td></tr>
+          <tr><td>Linen</td><td>#F0EDE8</td><td>Card backgrounds on light sections</td></tr>
+          <tr><td>Canvas</td><td>#E4DFD8</td><td>Borders and dividers on light sections</td></tr>
+          <tr><td>Mustard</td><td>#C4882A</td><td>PRIMARY ACCENT — all CTAs, labels, highlights</td></tr>
+          <tr><td>Amber</td><td>#D4A04A</td><td>Hover states, italic headline accent color</td></tr>
+          <tr><td>Rust</td><td>#A84832</td><td>Warnings, tertiary accent</td></tr>
+          <tr><td>Ink</td><td>#221F1A</td><td>Headlines on light backgrounds</td></tr>
+          <tr><td>Mid</td><td>#4A4238</td><td>Body text on light backgrounds</td></tr>
+          <tr><td>Muted</td><td>#8A8070</td><td>Metadata, nav links, subdued labels</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">Role Assignment Rule</span>
+      <p>Green family (pine, fern, sage) → backgrounds and borders ONLY. Mustard → every accent, CTA, label, and highlight. Never green text on green background.</p>
+    </div>
+
+    <hr>
+    <h3>Typography</h3>
+    <div class="three-col" style="margin-top:1.2rem;">
+      <div class="card">
+        <h3>Display · Cormorant Garamond</h3>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-style:italic;color:var(--pine);margin:0.5rem 0 0.3rem;font-weight:300;">Headlines</p>
+        <p style="font-size:0.82rem;margin:0;">Italic, weight 300. Section headings, hero titles, pull quotes. Never body text.</p>
+      </div>
+      <div class="card">
+        <h3>Body · Outfit</h3>
+        <p style="font-family:'Outfit',sans-serif;font-size:1rem;color:var(--pine);margin:0.5rem 0 0.3rem;font-weight:300;">Body text</p>
+        <p style="font-size:0.82rem;margin:0;">Weight 300 for body, 500-600 for UI labels. Warm and readable.</p>
+      </div>
+      <div class="card">
+        <h3>Labels · DM Mono</h3>
+        <p style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--fern);margin:0.5rem 0 0.3rem;letter-spacing:0.1em;">SECTION LABELS</p>
+        <p style="font-size:0.82rem;margin:0;">0.6rem, letter-spacing 0.2em, uppercase, fern green. Tags, metadata, nav.</p>
+      </div>
+    </div>
+
+    <hr>
+    <h3>Layout Pattern</h3>
+    <div class="card card-mustard">
+      <h3>Hero (above fold)</h3>
+      <p style="font-size:0.87rem;margin:0;line-height:1.7;">Dark pine background · Full viewport height · Large Cormorant Garamond italic · Amber accent on key word · Subtle radial glows · Pill tags at bottom</p>
+    </div>
+    <div class="card card-fern">
+      <h3>Content sections (below fold)</h3>
+      <p style="font-size:0.87rem;margin:0;line-height:1.7;">Bone background · Ink/mid text · Linen cards with canvas borders · Colored left borders · Max-width 860px · Section padding 6rem top/bottom</p>
+    </div>
+
+    <hr>
+    <h3>Key UI Patterns</h3>
+    <div class="code-block">
+      <pre>Quote block:   3px mustard left border · rgba(196,136,42,0.05) bg · italic Cormorant
+Cards:         linen bg · canvas border · 3px left border accent
+Tags/pills:    DM Mono 0.55rem · canvas border · muted color · borderRadius 2px
+Buttons:       DM Mono uppercase · mustard border · transparent bg · no border-radius
+Status Live:   fern green border + bg tint
+Status In dev: mustard border + bg tint
+Section label: DM Mono · 0.6rem · 0.2em tracking · uppercase · fern green
+Scroll reveal: IntersectionObserver · opacity 0→1 · translateY(22px)→0 · 0.7s ease</pre>
+    </div>
+
+    <hr>
+    <h3>Font Setup in Next.js</h3>
+    <p>Always use next/font/google. Never import Google Fonts via URL in CSS — it causes build errors.</p>
+    <div class="code-block">
+      <pre>// app/layout.tsx
+import { Cormorant_Garamond, Outfit, DM_Mono } from "next/font/google";
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"], weight: ["300","400","600"],
+  style: ["normal","italic"], variable: "--font-display", display: "swap",
+});
+const outfit = Outfit({
+  subsets: ["latin"], weight: ["300","400","500","600"],
+  variable: "--font-body", display: "swap",
+});
+const dmMono = DM_Mono({
+  subsets: ["latin"], weight: ["300","400","500"],
+  variable: "--font-mono", display: "swap",
+});
+
+// Apply to html element:
+&lt;html className={`${cormorant.variable} ${outfit.variable} ${dmMono.variable}`}&gt;</pre>
+    </div>
+    <div class="callout callout-warn">
+      <span class="callout-label">Common Mistake</span>
+      <p>Never add <code>--font-display: var(--font-display)</code> in globals.css — it creates a circular reference and breaks all fonts. The variables are set automatically by Next.js on the html element.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BUILD PHASES -->
+<section id="phases">
+  <div class="reveal">
+    <span class="section-label">02 — Build Phases</span>
+    <h2>From idea to deployed</h2>
+    <p class="lead">Every app goes through the same five phases. Don't skip ahead — the shortcuts always cost more time than they save.</p>
+    <hr>
+
+    <div class="phase-card">
+      <span class="section-label">Phase 1</span>
+      <h3>Concept & Scoping</h3>
+      <p>Write a project brief. Define the problem, vision, audience, must-haves, and open questions. Pick repo name following governance. Don't write code until the brief is clear.</p>
+    </div>
+
+    <div class="phase-card" style="background:#1E2E28;">
+      <span class="section-label">Phase 2</span>
+      <h3>Design System</h3>
+      <p>Copy globals.css from playbook. Set up layout.tsx with next/font/google. Lock in CSS variables before building any UI. Two hours here saves twenty hours later.</p>
+    </div>
+
+    <div class="phase-card" style="background:#111918;">
+      <span class="section-label">Phase 3</span>
+      <h3>Build</h3>
+      <p>Use Cursor + Claude Code. Write files directly — don't paste into terminal. Use cp ~/Downloads/file.tsx to replace files. Commit frequently with proper convention.</p>
+    </div>
+
+    <div class="phase-card" style="background:#1a2421;border:1px solid rgba(196,136,42,0.2);">
+      <span class="section-label">Phase 3B</span>
+      <h3>BYOK Gate Screen</h3>
+      <p>Create byok branch for public demo. Add GateScreen component. Configure 5 constants. Test with a real Anthropic API key. See BYOK section for full details.</p>
+    </div>
+
+    <div class="phase-card" style="background:#0F1A16;">
+      <span class="section-label">Phase 4</span>
+      <h3>GitHub Setup</h3>
+      <p>Create repo with correct naming. Add .gitignore first. Write README with status badges. Add description and topics. Create GitHub Release at v1.0.</p>
+    </div>
+
+    <div class="phase-card" style="background:#0A1410;">
+      <span class="section-label">Phase 5</span>
+      <h3>Vercel Deployment</h3>
+      <p>Import repo. Set Framework Preset to Next.js manually — it defaults to Other. Add env vars. Connect custom domain on katehaan.dev. Never share .vercel.app URL.</p>
+    </div>
+
+    <hr>
+    <h3>Phase 4 Checklist — GitHub Setup</h3>
+    <ul class="checklist" style="margin-top:1rem;">
+      <li>Repo name follows governance convention</li>
+      <li>.gitignore added on first commit (correct template for repo type)</li>
+      <li>README includes status badge and type badge</li>
+      <li>Description under 100 chars, no period at end</li>
+      <li>Topics added: claude · anthropic · ai · kate-haan + type and domain tags</li>
+      <li>GitHub Release created at v1.0 with release notes</li>
+      <li>Pinned on profile if Tier 1 project</li>
+    </ul>
+
+    <hr>
+    <h3>Phase 5 Checklist — Vercel Deployment</h3>
+    <ul class="checklist" style="margin-top:1rem;">
+      <li>Framework Preset set to Next.js (not Other)</li>
+      <li>Environment variables added (ANTHROPIC_API_KEY etc.)</li>
+      <li>Custom domain added: [repo-name].katehaan.dev</li>
+      <li>CNAME record added in Squarespace DNS</li>
+      <li>Domain shows green/valid in Vercel</li>
+      <li>README updated with custom domain URL (not .vercel.app)</li>
+      <li>.vercel.app URL never shared publicly</li>
+    </ul>
+  </div>
+</section>
+
+<!-- GOVERNANCE -->
+<section id="governance">
+  <div class="reveal">
+    <span class="section-label">03 — Governance</span>
+    <h2>Standards that apply to everything</h2>
+    <p>Decide once, apply everywhere. These standards exist so every new project benefits from every previous lesson.</p>
+    <hr>
+
+    <h3>Repo Naming</h3>
+    <div class="table-wrap" style="margin-top:1.2rem;">
+      <table>
+        <thead><tr><th>Type</th><th>Pattern</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td>OpenClaw Agents</td><td>openclaw-[name]</td><td>openclaw-heidi, openclaw-kristen, openclaw-sage</td></tr>
+          <tr><td>OpenClaw Framework</td><td>openclaw-[descriptor]</td><td>openclaw-starter, openclaw-playbook</td></tr>
+          <tr><td>Standalone Tools</td><td>descriptive-kebab</td><td>escalation-advisor, voice-tone-shifter</td></tr>
+          <tr><td>Playbooks / Guides</td><td>playbook-[topic]</td><td>playbook-app-build, playbook-analytics</td></tr>
+          <tr><td>Portfolio Site</td><td>[name]-dev</td><td>katehaan-dev</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr>
+    <h3>URL Governance</h3>
+    <div class="callout callout-warn">
+      <span class="callout-label">Lesson Learned</span>
+      <p>tone-fixer.vercel.app was claimed by someone else before a custom domain was set up. voice-tone-shifter.katehaan.dev is now the canonical URL. Never share .vercel.app links publicly.</p>
+    </div>
+    <div class="table-wrap" style="margin-top:1.2rem;">
+      <table>
+        <thead><tr><th>Pattern</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>[repo-name].katehaan.dev</td><td>All public-facing tool URLs</td></tr>
+          <tr><td>[repo-name]-demo.katehaan.dev</td><td>BYOK public demo versions</td></tr>
+          <tr><td>katehaan.dev</td><td>Portfolio site only</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:1rem;">To connect a subdomain: Vercel → Settings → Domains → add subdomain → copy CNAME → Squarespace DNS → Add Record → Type: CNAME, Name: [subdomain], Value: [from Vercel].</p>
+
+    <hr>
+    <h3>Commit Convention</h3>
+    <p>Format: <code>[type]: [what you did]</code> — lowercase, present tense, no period.</p>
+    <div class="table-wrap" style="margin-top:1rem;">
+      <table>
+        <thead><tr><th>Type</th><th>When to use</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>add:</td><td>New file, feature, section</td><td>add: escalation brief output with mustard border</td></tr>
+          <tr><td>update:</td><td>Changed existing content</td><td>update: governance section in playbook</td></tr>
+          <tr><td>fix:</td><td>Corrected something broken</td><td>fix: byok branch missing Change Key button</td></tr>
+          <tr><td>remove:</td><td>Deleted something</td><td>remove: stale weekly meal plan files</td></tr>
+          <tr><td>docs:</td><td>README or docs only</td><td>docs: add lessons learned to openclaw-starter</td></tr>
+          <tr><td>style:</td><td>Visual only, no logic change</td><td>style: tighten card padding on mobile</td></tr>
+          <tr><td>deploy:</td><td>Deployment related</td><td>deploy: trigger vercel redeploy after env var update</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr>
+    <h3>Versioning</h3>
+    <div class="table-wrap" style="margin-top:1rem;">
+      <table>
+        <thead><tr><th>Version</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>v0.1</td><td>Live but incomplete — scaffold exists, major sections missing</td></tr>
+          <tr><td>v1.0</td><td>MVP — core functionality works, publicly shareable</td></tr>
+          <tr><td>v1.1, v1.2...</td><td>Incremental improvements, no breaking changes</td></tr>
+          <tr><td>v2.0</td><td>Significant new capabilities or breaking changes</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr>
+    <h3>Status Badges</h3>
+    <p>Add to the top of every README. Status badge + type badge.</p>
+    <div class="code-block">
+      <pre>![Status](https://img.shields.io/badge/status-live-2E4A3E?style=flat-square)
+![Status](https://img.shields.io/badge/status-in%20dev-C4882A?style=flat-square)
+![Status](https://img.shields.io/badge/status-MVP-536B5E?style=flat-square)
+![Type](https://img.shields.io/badge/type-agent-1a2421?style=flat-square)
+![Type](https://img.shields.io/badge/type-tool-1a2421?style=flat-square)
+![Type](https://img.shields.io/badge/type-playbook-1a2421?style=flat-square)</pre>
+    </div>
+
+    <hr>
+    <h3>.gitignore Templates</h3>
+    <div class="two-col" style="margin-top:1.2rem;">
+      <div>
+        <h3 style="margin-bottom:0.75rem;">Agent repos (most restrictive)</h3>
+        <div class="code-block">
+          <pre>google_token.json
+*.json
+client_secret*.json
+.env / .env.*
+memory/
+meal-planning/
+crm/people.md
+FUTURE_KATE.md
+avatar/
+FRANK_FLAG.md
+.DS_Store
+__pycache__/
+*.pyc
+node_modules/</pre>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:0.75rem;">App / tool repos</h3>
+        <div class="code-block">
+          <pre>.env
+.env.*
+.env.local
+node_modules/
+.next/
+out/
+dist/
+build/
+.DS_Store
+*.log</pre>
+        </div>
+        <h3 style="margin-bottom:0.75rem;margin-top:1rem;">Playbook / guide repos</h3>
+        <div class="code-block">
+          <pre>.DS_Store
+*.log
+node_modules/
+drafts/
+*.draft.md</pre>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <h3>Profile Pinning Strategy</h3>
+    <div class="table-wrap" style="margin-top:1rem;">
+      <table>
+        <thead><tr><th>Slot</th><th>Repo</th><th>Rule</th></tr></thead>
+        <tbody>
+          <tr><td>1 (permanent)</td><td>openclaw-starter</td><td>Framework — most shareable</td></tr>
+          <tr><td>2 (permanent)</td><td>escalation-advisor</td><td>Most polished live tool</td></tr>
+          <tr><td>3 (permanent)</td><td>katehaan-dev</td><td>Portfolio site — always current</td></tr>
+          <tr><td>4 (rotating)</td><td>Most recently shipped</td><td>Shows momentum</td></tr>
+          <tr><td>5 (rotating)</td><td>Most career-relevant</td><td>Reflects current goals</td></tr>
+          <tr><td>6 (rotating)</td><td>One personal/charming project</td><td>Personality</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- BYOK -->
+<section id="byok">
+  <div class="reveal">
+    <span class="section-label">04 — BYOK Gate Screen</span>
+    <h2>Public demo pattern</h2>
+    <p>All public tools use a BYOK (Bring Your Own Key) gate so Claude API costs aren't on Kate. The gate collects the user's Anthropic API key, validates it, and stores it in sessionStorage for the session.</p>
+    <hr>
+
+    <div class="quote-block">
+      <p>Two versions of every tool: main branch for team use (no gate), byok branch for public demo (gate screen required).</p>
+    </div>
+
+    <h3 style="margin-top:2rem;">Gate Screen Standard</h3>
+    <div class="card card-mustard">
+      <h3>Source of Truth</h3>
+      <p style="font-size:0.87rem;margin:0;">voice-tone-shifter.katehaan.dev (formerly tone-fixer — renamed per governance). The GateScreen component lives in gate-screen-starter/ in this repo.</p>
+    </div>
+
+    <h3 style="margin-top:1.5rem;">The 5 Constants</h3>
+    <p>Configure these for each app — everything else stays the same.</p>
+    <div class="code-block">
+      <pre>PRODUCT_NAME     — app name displayed on gate screen
+PRODUCT_TAGLINE  — one-line description
+FEATURE_LIST     — array of bullet points (what the tool does)
+ACCENT_COLOR     — mustard (#C4882A) by default
+GITHUB_URL       — link to the public repo</pre>
+    </div>
+
+    <h3 style="margin-top:1.5rem;">Deployment Flow</h3>
+    <ul class="checklist" style="margin-top:0.75rem;">
+      <li>Build on main branch without gate (team/internal use)</li>
+      <li>Create byok branch from main</li>
+      <li>Add GateScreen component, configure 5 constants</li>
+      <li>Deploy byok branch to [repo-name]-demo.katehaan.dev</li>
+      <li>Deploy main branch to [repo-name].katehaan.dev</li>
+      <li>README links to both versions with clear labels</li>
+    </ul>
+
+    <div class="callout">
+      <span class="callout-label">Key Behavior</span>
+      <p>The gate screen stores the API key in sessionStorage — it clears when the browser tab closes. Users need to re-enter their key each session. This is intentional for security.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LESSONS LEARNED -->
+<section id="lessons">
+  <div class="reveal">
+    <span class="section-label">05 — Lessons Learned</span>
+    <h2>What nobody warns you about</h2>
+
+    <p>Nobody warns you that building your first app feels like death by a thousand cuts. Not because any single thing is hard — it isn't. It's that every step has a small gotcha attached to it. None of it is insurmountable. All of it is annoying. And most people quit somewhere in that gap.</p>
+    <p>The gotchas are just tax you pay once.</p>
+
+    <hr>
+
+    <div class="lesson">
+      <h3>Install prerequisites before you start building</h3>
+      <p>Node, Git, and a GitHub account. Do it the day before. Don't discover you're missing them mid-build. Install Homebrew first: <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code> then <code>brew install node git gh</code>.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>GitHub doesn't accept passwords anymore</h3>
+      <p>Password authentication was deprecated in 2021. Use the GitHub CLI: <code>brew install gh</code> then <code>gh auth login</code>. Takes five minutes, works cleanly forever.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>Never share a .vercel.app URL publicly</h3>
+      <p>tone-fixer.vercel.app was claimed by someone else before a custom domain was set up. Always add [repo-name].katehaan.dev before sharing any link. Subdomains are free and permanent.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>Your .gitignore is a security document</h3>
+      <p>Add it before you add anything else. One accidental commit of google_token.json to a public repo means rotating credentials. Use the templates in this playbook. Create on first commit — never the second.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>Cursor + Claude Code beats pasting</h3>
+      <p>Paste corruption is real. Backticks, smart quotes, and special characters get mangled when copying from a browser into a terminal. Let Claude Code write directly to the file. For replacements, use <code>cp ~/Downloads/file.tsx ~/project/app/file.tsx</code>.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>The design system takes two hours and saves twenty</h3>
+      <p>Lock in CSS variables before building a single page. The temptation is to get something on screen fast and style it later. Later never comes, and you end up with inconsistency that takes longer to fix than the design system would have taken to set up.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>You will deploy to a 404 at least once</h3>
+      <p>Check your framework preset in Vercel settings. It defaults to Other when it can't detect the project type. Set it to Next.js manually, then redeploy.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>Font variables can be circular</h3>
+      <p>Never write <code>--font-display: var(--font-display)</code> in globals.css. It creates a circular reference and breaks all fonts. Next.js sets these variables automatically on the html element via layout.tsx.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>Green-on-green is the silent design killer</h3>
+      <p>The original design system used green for everything — backgrounds, text, accents, borders. Nothing had contrast. Rule: green family = structural (backgrounds, borders) only. Mustard = every single accent. Never mix.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>The gap is smaller than it looks</h3>
+      <p>The whole process — zero to a live, custom-domain app with a design system and a BYOK gate — takes one focused session. It wasn't smooth. It also wasn't that hard. The gap between "I could never build that" and "I just did" is mostly just not quitting when the third thing in a row doesn't work.</p>
+    </div>
+
+    <hr>
+    <div class="quote-block">
+      <p>Every person who has a GitHub they're proud of went through the same frustrations. They just kept going.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>KATE HAAN · APP BUILD PLAYBOOK · 2026 · LIVING DOCUMENT — UPDATE WITH EVERY LESSON LEARNED</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
