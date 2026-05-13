@@ -57,11 +57,18 @@
   }
   .nav-links a:hover { color: var(--bone); }
 
+  .inner-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+
   /* COVER */
   #cover {
     min-height: 100vh; display: flex; flex-direction: column;
     justify-content: flex-end; background: var(--pine);
     position: relative; overflow: hidden; padding-top: 56px;
+    width: 100%;
   }
   #cover::before {
     content: ''; position: absolute; top: -15%; right: -8%;
@@ -112,7 +119,7 @@
   }
 
   /* SECTIONS */
-  section { padding: 6rem 2rem; max-width: 860px; margin: 0 auto; }
+  section { padding: 0; width: 100%; }
   .section-label {
     font-family: 'DM Mono', monospace;
     font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
@@ -310,6 +317,7 @@
 
 <!-- OVERVIEW -->
 <section id="overview">
+  <div class="inner-wrap">
   <div class="reveal">
     <span class="section-label">00 — Overview</span>
     <h2>What this is</h2>
@@ -338,10 +346,12 @@
       </div>
     </div>
   </div>
+</div>
 </section>
 
 <!-- DESIGN SYSTEM -->
 <section id="design">
+  <div class="inner-wrap">
   <div class="reveal">
     <span class="section-label">01 — Design System</span>
     <h2>Colors, type & patterns</h2>
@@ -446,10 +456,12 @@ const dmMono = DM_Mono({
       <p>Never add <code>--font-display: var(--font-display)</code> in globals.css — it creates a circular reference and breaks all fonts. The variables are set automatically by Next.js on the html element.</p>
     </div>
   </div>
+</div>
 </section>
 
 <!-- BUILD PHASES -->
 <section id="phases">
+  <div class="inner-wrap">
   <div class="reveal">
     <span class="section-label">02 — Build Phases</span>
     <h2>From idea to deployed</h2>
@@ -516,10 +528,12 @@ const dmMono = DM_Mono({
       <li>.vercel.app URL never shared publicly</li>
     </ul>
   </div>
+</div>
 </section>
 
 <!-- GOVERNANCE -->
 <section id="governance">
+  <div class="inner-wrap">
   <div class="reveal">
     <span class="section-label">03 — Governance</span>
     <h2>Standards that apply to everything</h2>
@@ -665,10 +679,12 @@ drafts/
       </table>
     </div>
   </div>
+</div>
 </section>
 
 <!-- BYOK -->
 <section id="byok">
+  <div class="inner-wrap">
   <div class="reveal">
     <span class="section-label">04 — BYOK Gate Screen</span>
     <h2>Public demo pattern</h2>
@@ -710,10 +726,12 @@ GITHUB_URL       — link to the public repo</pre>
       <p>The gate screen stores the API key in sessionStorage — it clears when the browser tab closes. Users need to re-enter their key each session. This is intentional for security.</p>
     </div>
   </div>
+</div>
 </section>
 
 <!-- LESSONS LEARNED -->
 <section id="lessons">
+  <div class="inner-wrap">
   <div class="reveal">
     <span class="section-label">05 — Lessons Learned</span>
     <h2>What nobody warns you about</h2>
@@ -778,6 +796,7 @@ GITHUB_URL       — link to the public repo</pre>
       <p>Every person who has a GitHub they're proud of went through the same frustrations. They just kept going.</p>
     </div>
   </div>
+</div>
 </section>
 
 <footer>
