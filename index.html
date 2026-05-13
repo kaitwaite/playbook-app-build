@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light only">
-<title>App Build Playbook — Kate Haan</title>
+<title>KATE: APP BUILD PLAYBOOK</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -45,9 +45,9 @@
     height: 56px;
   }
   .nav-logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem; font-style: italic; font-weight: 300;
-    letter-spacing: 0.1em; color: var(--bone);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; font-style: normal; font-weight: 400;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone);
   }
   .nav-links { display: flex; gap: 1.8rem; list-style: none; }
   .nav-links a {
@@ -280,11 +280,15 @@
     nav .nav-links { display: none; }
   }
 </style>
+<link rel="icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 </head>
 <body>
 
 <nav>
-  <div class="nav-logo">Kate — App Build Playbook</div>
+  <div class="nav-logo">KATE: APP BUILD PLAYBOOK</div>
   <ul class="nav-links">
     <li><a href="#overview">Overview</a></li>
     <li><a href="#design">Design System</a></li>
@@ -292,6 +296,7 @@
     <li><a href="#governance">Governance</a></li>
     <li><a href="#byok">BYOK</a></li>
     <li><a href="#lessons">Lessons Learned</a></li>
+    <li><a href="#favicon">Favicon</a></li>
   </ul>
 </nav>
 
@@ -797,6 +802,75 @@ GITHUB_URL       — link to the public repo</pre>
     </div>
   </div>
 </div>
+</section>
+
+
+<!-- FAVICON STANDARD -->
+<section id="favicon">
+  <div class="inner-wrap">
+    <div class="reveal">
+      <span class="section-label">06 — Favicon Standard</span>
+      <h2>Never ship the gray globe</h2>
+      <p>Every site gets a custom favicon. It takes five minutes and immediately signals that someone intentional built this. Use <a href="https://favicon.io/favicon-generator" target="_blank">favicon.io/favicon-generator</a> — no design tools required.</p>
+      <hr>
+
+      <h3>The Pattern</h3>
+      <div class="table-wrap" style="margin-top:1.2rem;">
+        <table>
+          <thead><tr><th>Site</th><th>Text</th><th>Background</th><th>Font Color</th></tr></thead>
+          <tbody>
+            <tr><td>katehaan.dev</td><td>KH</td><td>#1a2421 (pine)</td><td>#FAF8F5 (bone)</td></tr>
+            <tr><td>brand-book.katehaan.dev</td><td>KH</td><td>#1a2421 (pine)</td><td>#FAF8F5 (bone)</td></tr>
+            <tr><td>release-playbook.katehaan.dev</td><td>{}</td><td>#1a2421 (pine)</td><td>#C4882A (mustard)</td></tr>
+            <tr><td>escalation-advisor.katehaan.dev</td><td>↑</td><td>#1a2421 (pine)</td><td>#C4882A (mustard)</td></tr>
+            <tr><td>voice-tone-shifter.katehaan.dev</td><td>~</td><td>#1a2421 (pine)</td><td>#C4882A (mustard)</td></tr>
+            <tr><td>Any new tool</td><td>1-2 char symbol</td><td>#1a2421 (pine)</td><td>#C4882A (mustard)</td></tr>
+            <tr><td>Any brand property</td><td>KH</td><td>#1a2421 (pine)</td><td>#FAF8F5 (bone)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">The Rule</span>
+        <p>Brand properties (portfolio, brand book, playbook) → KH in bone. Tools → short symbol in mustard that hints at what the tool does. Background always pine #1a2421.</p>
+      </div>
+
+      <hr>
+      <h3>How to Generate</h3>
+      <ul class="checklist" style="margin-top:0.75rem;">
+        <li>Go to favicon.io/favicon-generator</li>
+        <li>Set Text to your 1-2 character symbol (see table above)</li>
+        <li>Set Background Color to #1a2421</li>
+        <li>Set Font Color to #FAF8F5 (brand) or #C4882A (tool)</li>
+        <li>Set Font Family — serif for KH, monospace for symbols</li>
+        <li>Set Font Size — 50-60 works well for 2 chars, 80+ for single char</li>
+        <li>Download the zip</li>
+      </ul>
+
+      <hr>
+      <h3>How to Install</h3>
+      <div class="two-col" style="margin-top:1.2rem;">
+        <div class="card card-fern">
+          <h3>Plain HTML sites</h3>
+          <p style="font-size:0.87rem;margin-bottom:0.75rem;">Drop favicon.ico into the root folder alongside index.html. Add to &lt;head&gt;:</p>
+          <div class="code-block"><pre>&lt;link rel="icon" href="/favicon.ico"&gt;
+&lt;link rel="icon" type="image/png"
+  sizes="32x32" href="/favicon-32x32.png"&gt;
+&lt;link rel="icon" type="image/png"
+  sizes="16x16" href="/favicon-16x16.png"&gt;</pre></div>
+        </div>
+        <div class="card card-mustard">
+          <h3>Next.js sites</h3>
+          <p style="font-size:0.87rem;margin:0;">Drop favicon.ico directly into the app/ folder. Next.js picks it up automatically — no code changes needed.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="callout-label">Don't Forget</span>
+        <p>Browsers cache favicons aggressively. After updating, hard refresh with Cmd + Shift + R to see the new one. Or open in an incognito window.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <footer>
